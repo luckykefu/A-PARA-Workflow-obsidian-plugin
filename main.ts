@@ -6,6 +6,7 @@
 import { OpenInVSCode, moveToArchives } from "func/FileMenu";
 import { Publish } from "func/Publish";
 import { addYamlAttributes, deleteYamlAttributes } from "func/YAMLAddAndDel";
+import { addPdfSplit } from "func/addPdfSplit";
 import { delEmptyLine } from "func/delEmptyLine";
 import { test } from "gray-matter";
 import { getMessage } from "i18n/i18n"; // 导入国际化函数，用于获取翻译后的消息
@@ -115,6 +116,13 @@ export default class MyPlugin extends Plugin {
 					await delEmptyLine(editor);
 				} catch (error) {
 					console.error("Error in delEmptyLine:", error);
+				}
+			}
+			if (this.settings.addPdfSplit){
+				try {
+					await addPdfSplit(editor);
+				} catch (error) {
+					console.error("Error in addPdfSplit",error);
 				}
 			}
 		});

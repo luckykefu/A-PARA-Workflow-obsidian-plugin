@@ -138,7 +138,8 @@ const langEn: Message = {
     DeleteExistingYAMLOfCurrentDocument: 'Delete the Existing YAML of the Current Document',
     AreaNone: "",
     excludedAddYamlFolder:"exclude Folder",
-    mdFormatUrl:'md format convert url'
+    mdFormatUrl:'md format convert url',
+    addPdfSplit:'add pdf split page symbol'
 }
 
 const langZh: Message = {
@@ -209,7 +210,9 @@ const langZh: Message = {
     DeleteExistingYAMLOfCurrentDocument: '删除当前文档中已存在的YAML属性',
     AreaNone: "",
     excludedAddYamlFolder: '排除文件夹',
-    mdFormatUrl:'md格式转换网址'
+    mdFormatUrl:'md格式转换网址',
+    addPdfSplit:'添加pdf导出分页符'
+
 
 }
 export async function getMessage(key: string) {

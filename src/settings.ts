@@ -35,6 +35,9 @@ export interface MyPluginSettings {
 	taskDateFormat: string;
 	DelEmptyLine: boolean;
 	mdFormatUrl: string;
+	//添加pdf分页代码 <div STYLE="page-break-after: always;"></div>
+	addPdfSplit: boolean;
+	
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -67,7 +70,9 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	addTaskDate: true,
 	taskDateFormat: "yyyy-MM-DD",
 	DelEmptyLine: true,
-	mdFormatUrl:"http://localhost:8081/md/"
+	mdFormatUrl:"http://localhost:8081/md/",
+	//添加pdf分页代码 <div STYLE="page-break-after: always;"></div>
+	addPdfSplit: false
 };
 export class SampleSettingTab extends PluginSettingTab {
 	plugin: any;
@@ -419,7 +424,7 @@ export class SampleSettingTab extends PluginSettingTab {
 						await this.plugin.saveData(this.plugin.settings);
 					})
 			);
-		containerEl.createEl("h5",'<br>');
+		containerEl.createEl("h5",{text:await getMessage("DeleteEmptyLine")});
 		new Setting(containerEl)
 			.setName(await getMessage("DeleteEmptyLine"))
 			.addToggle((toggle) =>
@@ -431,7 +436,7 @@ export class SampleSettingTab extends PluginSettingTab {
 						//console.log("autoAddYaml: " + this.plugin.settings.DelEmptyLine);
 					})
 			);
-		containerEl.createEl("h5",'<br>');
+		containerEl.createEl("h5",{text:await getMessage("mdFormatUrl")});
 
 		new Setting(containerEl)
 		.setName(await getMessage("mdFormatUrl"))
@@ -442,6 +447,17 @@ export class SampleSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					// value = await processFolder(value);
 					this.plugin.settings.mdFormatUrl = value;
+					await this.plugin.saveData(this.plugin.settings);
+				})
+		);
+		containerEl.createEl("h5",{text:await getMessage("addPdfSplit")});
+		new Setting(containerEl)
+		.setName(await getMessage("addPdfSplit"))
+		.addToggle((toggle) =>
+			toggle
+				.setValue(this.plugin.settings.addPdfSplit)
+				.onChange(async (value) => {
+					this.plugin.settings.addPdfSplit = value;
 					await this.plugin.saveData(this.plugin.settings);
 				})
 		);
