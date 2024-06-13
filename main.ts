@@ -6,7 +6,7 @@
 import { OpenInVSCode, moveToArchives } from "func/FileMenu";
 import { Publish } from "func/Publish";
 import { addYamlAttributes, deleteYamlAttributes } from "func/YAMLAddAndDel";
-import { addPdfSplit } from "func/addPdfSplit";
+import { addPdfSplit, addPdfSplitFileMenu } from "func/addPdfSplit";
 import { delEmptyLine } from "func/delEmptyLine";
 import { test } from "gray-matter";
 import { getMessage } from "i18n/i18n"; // 导入国际化函数，用于获取翻译后的消息
@@ -83,7 +83,14 @@ export default class MyPlugin extends Plugin {
 					item.setTitle(`Publish To ... 👈`)
 						.setIcon("upload")
 						.onClick(async () => {
-							Publish(this.app, file,self.settings);
+							Publish(this.app, file, self.settings);
+						});
+				});
+				menu.addItem((item) => {
+					item.setTitle(`addPdfSplit 👈`)
+						.setIcon("folder-move")
+						.onClick(async () => {
+							addPdfSplitFileMenu(this.app, self.settings, file);
 						});
 				});
 				menu.addItem((item) => {
@@ -108,23 +115,31 @@ export default class MyPlugin extends Plugin {
 		});
 
 		//删除多余空行
+		let isProcessing= false;
 		this.app.workspace.on("editor-change", async (editor: Editor) => {
 			// 如果设置为自动添加YAML属性，则调用addYamlAttributes方法
+			if (isProcessing) {
+                return;
+            }
 
-			if (this.settings.DelEmptyLine) {
-				try {
-					await delEmptyLine(editor);
-				} catch (error) {
-					console.error("Error in delEmptyLine:", error);
-				}
-			}
-			if (this.settings.addPdfSplit){
-				try {
-					await addPdfSplit(editor);
-				} catch (error) {
-					console.error("Error in addPdfSplit",error);
-				}
-			}
+            isProcessing = true;
+
+ 			try {
+                // 如果设置为删除多余空行
+                if (this.settings.DelEmptyLine) {
+                    await delEmptyLine(editor);
+                }
+
+                // 如果设置为添加PDF分页分割
+                if (this.settings.addPdfSplit) {
+                    await addPdfSplit(editor);
+                }
+            } catch (error) {
+                console.error("Error in editor-change handler:", error);
+            } finally {
+                // 无论是否出错，处理完成后将标志设为false
+                isProcessing = false;
+            }
 		});
 		//监听VIEW的点击事件
 		myEmitterListener(this.app, this.settings);

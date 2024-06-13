@@ -1,26 +1,52 @@
-import { Editor } from "obsidian";
+import { App, Editor, TAbstractFile, TFile } from "obsidian";
+import matter from "gray-matter";
+import { MyPluginSettings } from "src/settings";
 
 export async function addPdfSplit(editor: Editor) {
+	try {
     //获取光标位置
 	const cursorPosition = editor.getCursor();
     //获取文件内容
 	const fileContent = editor.getValue();
-    //获取所有的行
-    const lines = fileContent.split('\n');
-    let newContent = lines.map((line, index, arr) => {
-        // 检查行是否以 '---' 开头
-        if (line.trim() === '---') {
-            // 检查下一行是否已经包含所需的 div 标签
-            const nextLine = arr[index + 1]?.trim() || '';
-            if (!nextLine.startsWith('<div STYLE="page-break-after: always;"></div>')) {
-                // 如果下一行不包含 div 标签，则追加它
-                return `${line}\n<div STYLE="page-break-after: always;"></div>`;
-            }
-        }
-        // 其他行保持不变
-        return line;
-    }).join('\n');
+	const parsedContent = matter(fileContent);
+	// 定义替换的正则表达式和替换内容
+	const delimiter = '---';
+	const pageBreakHTML = '<div style="page-break-after: always;"></div>';
+	parsedContent.content= parsedContent.content.replace(/<div\s*style\s*=\s*"\s*page-break-after\s*:\s*always\s*;\s*"><\/div>/gi, '');
+	parsedContent.content= parsedContent.content.replace(/---/g, `${delimiter}\n${pageBreakHTML}`);
+	const updatedContent = matter.stringify(parsedContent.content, parsedContent.data);
+	
+	if (updatedContent!==fileContent){
+		editor.setValue(updatedContent);
+		editor.setCursor(cursorPosition);
+	}
 
-    editor.setValue(newContent);
-	editor.setCursor(cursorPosition);
+	} catch (error) {
+		console.error("Error in addPdfSplit:", error);
+	}
+}
+export async function addPdfSplitFileMenu(app:App,settings: MyPluginSettings,file: TAbstractFile) {
+	try {
+		// 判断是否是md文件
+		if (!(file instanceof TFile) || file.extension !== "md") {
+			// console.error("Not a Markdown file:", file);
+			return;
+		}
+        // 获取文件内容
+        const fileContent = await app.vault.read(file);
+		const parsedContent = matter(fileContent);
+		// 定义替换的正则表达式和替换内容
+		const delimiter = '---';
+		const pageBreakHTML = '<div style="page-break-after: always;"></div>';
+		parsedContent.content= parsedContent.content.replace(/<div\s*style\s*=\s*"\s*page-break-after\s*:\s*always\s*;\s*"><\/div>/gi, '');
+		parsedContent.content= parsedContent.content.replace(/---/g, `${delimiter}\n${pageBreakHTML}`);
+ 		const updatedContent = matter.stringify(parsedContent.content, parsedContent.data);
+		// 写回文件内容
+		if (updatedContent !== fileContent) {
+			await app.vault.modify(file, updatedContent);
+		}
+
+	} catch (error) {
+		console.error("Error in addPdfSplitFileMenu:", error);
+	  }
 }

@@ -1,4 +1,5 @@
 import { addYamlAttributes, deleteYamlAttributes } from "func/YAMLAddAndDel";
+import { addPdfSplit } from "func/addPdfSplit";
 import { addTaskWithDate } from "func/addTaskWithDate";
 import { createPARA } from "func/createPARA";
 import { delEmptyLine } from "func/delEmptyLine";
@@ -53,6 +54,14 @@ export async function addCommand(ts: any){
         name:await getMessage('DeleteEmptyLine'),
         editorCallback: (editor:Editor)=> {
             delEmptyLine(editor);
+        },
+
+    });
+    ts.addCommand({
+        id:'add-pdf-split',
+        name:await getMessage('addPdfSplit'),
+        editorCallback: (editor:Editor)=> {
+            addPdfSplit(editor);
         },
 
     });
