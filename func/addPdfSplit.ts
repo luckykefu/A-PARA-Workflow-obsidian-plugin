@@ -10,10 +10,10 @@ export async function addPdfSplit(editor: Editor) {
 	const fileContent = editor.getValue();
 	const parsedContent = matter(fileContent);
 	// 定义替换的正则表达式和替换内容
-	const delimiter = '---';
+	const delimiter = '---\n';
 	const pageBreakHTML = '<div style="page-break-after: always;"></div>';
 	parsedContent.content= parsedContent.content.replace(/<div\s*style\s*=\s*"\s*page-break-after\s*:\s*always\s*;\s*"><\/div>/gi, '');
-	parsedContent.content= parsedContent.content.replace(/---/g, `${delimiter}\n${pageBreakHTML}`);
+	parsedContent.content= parsedContent.content.replace(/---\n/g, `${delimiter}${pageBreakHTML}`);
 	const updatedContent = matter.stringify(parsedContent.content, parsedContent.data);
 	
 	if (updatedContent!==fileContent){
@@ -36,10 +36,10 @@ export async function addPdfSplitFileMenu(app:App,settings: MyPluginSettings,fil
         const fileContent = await app.vault.read(file);
 		const parsedContent = matter(fileContent);
 		// 定义替换的正则表达式和替换内容
-		const delimiter = '---';
+		const delimiter = '---\n';
 		const pageBreakHTML = '<div style="page-break-after: always;"></div>';
 		parsedContent.content= parsedContent.content.replace(/<div\s*style\s*=\s*"\s*page-break-after\s*:\s*always\s*;\s*"><\/div>/gi, '');
-		parsedContent.content= parsedContent.content.replace(/---/g, `${delimiter}\n${pageBreakHTML}`);
+		parsedContent.content= parsedContent.content.replace(/---\n/g, `${delimiter}${pageBreakHTML}`);
  		const updatedContent = matter.stringify(parsedContent.content, parsedContent.data);
 		// 写回文件内容
 		if (updatedContent !== fileContent) {
