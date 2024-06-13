@@ -13,7 +13,7 @@ export async function addPdfSplit(editor: Editor) {
 	const delimiter = '---\n';
 	const pageBreakHTML = '<div style="page-break-after: always;"></div>';
 	parsedContent.content= parsedContent.content.replace(/<div\s*style\s*=\s*"\s*page-break-after\s*:\s*always\s*;\s*"><\/div>/gi, '');
-	parsedContent.content= parsedContent.content.replace(/---\n/g, `${delimiter}${pageBreakHTML}`);
+	parsedContent.content= parsedContent.content.replace(/---\n/g, `${delimiter}${pageBreakHTML}\n`);
 	const updatedContent = matter.stringify(parsedContent.content, parsedContent.data);
 	
 	if (updatedContent!==fileContent){
@@ -39,7 +39,7 @@ export async function addPdfSplitFileMenu(app:App,settings: MyPluginSettings,fil
 		const delimiter = '---\n';
 		const pageBreakHTML = '<div style="page-break-after: always;"></div>';
 		parsedContent.content= parsedContent.content.replace(/<div\s*style\s*=\s*"\s*page-break-after\s*:\s*always\s*;\s*"><\/div>/gi, '');
-		parsedContent.content= parsedContent.content.replace(/---\n/g, `${delimiter}${pageBreakHTML}`);
+		parsedContent.content= parsedContent.content.replace(/---\n/g, `${delimiter}${pageBreakHTML}\n`);
  		const updatedContent = matter.stringify(parsedContent.content, parsedContent.data);
 		// 写回文件内容
 		if (updatedContent !== fileContent) {

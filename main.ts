@@ -125,15 +125,16 @@ export default class MyPlugin extends Plugin {
             isProcessing = true;
 
  			try {
+				// 如果设置为添加PDF分页分割
+				if (this.settings.addPdfSplit) {
+					await addPdfSplit(editor);
+				}
                 // 如果设置为删除多余空行
                 if (this.settings.DelEmptyLine) {
                     await delEmptyLine(editor);
                 }
 
-                // 如果设置为添加PDF分页分割
-                if (this.settings.addPdfSplit) {
-                    await addPdfSplit(editor);
-                }
+
             } catch (error) {
                 console.error("Error in editor-change handler:", error);
             } finally {
